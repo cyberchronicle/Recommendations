@@ -47,3 +47,5 @@
 - Леша Земцов [@zzmtsvv](https://t.me/zzmtsvv)
 - Тимур Захаров [@goddesu](https://t.me/goddesu)
 - Переверзев Артем [@astifer](https://t.me/astifer)
+
+всем привет друзья
