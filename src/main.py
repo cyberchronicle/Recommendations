@@ -7,12 +7,10 @@ from sqlalchemy.orm import sessionmaker
 
 app = FastAPI()
 
-# Подключаемся к базе данных SQLite
-DATABASE_URL = "sqlite:///./test.db"  # SQLite файл будет лежать в корне проекта
+DATABASE_URL = "sqlite:///./test.db"  # TODO: унести адресс в конфиги/окружение 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Модель для работы с таблицей в базе данных
 Base = declarative_base()
 
 
@@ -23,11 +21,9 @@ class Article(Base):
     key_words = Column(String, index=True)
 
 
-# Создаем таблицу
 Base.metadata.create_all(bind=engine)
 
 
-# Модель для получения данных через API
 class ArticleCreate(BaseModel):
     id: int
     key_words: List[str]
