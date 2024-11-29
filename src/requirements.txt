@@ -7,3 +7,5 @@ databases
 python-dotenv
 strawberry-graphql
 pydantic_settings
+confluent-kafka
+requests
