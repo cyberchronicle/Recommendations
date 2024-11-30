@@ -1,5 +1,9 @@
+# custom
 
 data
+
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -27,6 +31,7 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.idea
 MANIFEST
 
 # PyInstaller

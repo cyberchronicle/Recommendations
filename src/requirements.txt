@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+graphene
+databases
+python-dotenv
+strawberry-graphql
+pydantic_settings
