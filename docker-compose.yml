@@ -10,6 +10,17 @@ services:
       - ./src:/app/src
     networks:
       - app-net
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    env_file:
+      - "./src/.env"
+    ports:
+      - "5432:5432"
+    networks:
+      - app-net
 
 volumes:
   app-data:
