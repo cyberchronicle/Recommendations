@@ -1,8 +1,9 @@
 import strawberry
 from typing import List
 from sqlalchemy.orm import Session
-from my_database import SessionLocal
-from models import Article
+
+from app.api.deps import SessionDep
+from app.models import Article
 
 @strawberry.type
 class ArticleInfo:
@@ -28,7 +29,7 @@ class ArticlesPagination:
     page_info: PaginationInfo
 
 def get_articles(page: int = 1, page_size: int = 20) -> ArticlesPagination:
-    db: Session = SessionLocal()
+    db: Session = SessionDep
     query = db.query(Article).offset((page - 1) * page_size).limit(page_size).all()
     db.close()
     items = [
