@@ -1,0 +1,129 @@
+openapi: 3.0.3
+servers:
+  - url: localhost:9003/api/v1/scrapper
+info:
+  version: 1.0.0
+  title: Scrapper API
+paths:
+  /articles:
+    post:
+      summary: Получить статьи по списку ID
+      description: Этот метод принимает массив ID статей и возвращает массив статей.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+              required:
+                - ids
+              example:
+                ids: [ 1, 2, 3, 4]
+      responses:
+        '200':
+          description: Успешный ответ с массивом статей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ArticleInfo"
+        '400':
+          description: Ошибка в запросе (например, неверный формат данных)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /article/{id}:
+    get:
+      summary: Получить статью по ID
+      description: Возвращает информацию об отдельной статье на основе её ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Идентификатор статьи
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешный ответ с данными статьи
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticleInfo"
+        '400':
+          description: Неверный запрос (например, ID не является целым числом)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Неверный ID статьи"
+        '404':
+          description: Статья с указанным ID не найдена
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Статья не найдена"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: "Произошла ошибка на сервере"
+components:
+  schemas:
+    ArticleInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        text:
+          type: string
+        complexity:
+          type: string
+        readingTime:
+          type: string
+          description: длительность чтения в минутах
+        tags:
+          type: array
+          items:
+            type: integer
+        likes:
+          type: integer
+        likedByUser:
+          type: boolean
+
