@@ -39,7 +39,7 @@ def get_articles(page: int = 1, page_size: int = 20) -> ArticlesPagination:
             text=article.text,
             complexity=article.complexity,
             reading_time=article.reading_time,
-            tags=article.tags.split(','),
+            tags=article.tags.split(','), #TODO: check if it is works
             likes=0,
             liked_by_user=False
         )
@@ -54,7 +54,7 @@ def get_articles(page: int = 1, page_size: int = 20) -> ArticlesPagination:
     return ArticlesPagination(items=items, page_info=page_info)
 
 def get_article(id: int) -> ArticleInfo:
-    db: Session = SessionLocal()
+    db: Session = SessionDep
     article = db.query(Article).filter(Article.id == id).first()
     db.close()
     if article:
@@ -64,7 +64,7 @@ def get_article(id: int) -> ArticleInfo:
             text=article.text,
             complexity=article.complexity,
             reading_time=article.reading_time,
-            tags=article.tags.split(','),
+            tags=article.tags.split(','), #TODO: check if it is works
             likes=0,
             liked_by_user=False
         )
