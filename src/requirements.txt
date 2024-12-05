@@ -9,3 +9,4 @@ strawberry-graphql
 pydantic_settings
 confluent-kafka
 requests
+kafka-python
