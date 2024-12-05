@@ -10,6 +10,9 @@ services:
       - ./src:/app/src
     networks:
       - app-net
+    depends_on:
+      - postgres
+
   kafka:
     image: confluentinc/cp-kafka:latest
     ports:
@@ -26,7 +29,16 @@ services:
     image: wurstmeister/zookeeper:latest
     ports:
       - "2181:2181"
-      
+          
+  postgres:
+    image: postgres:16
+    env_file:
+      - "./src/.env"
+    ports:
+      - "5432:5432"
+    networks:
+      - app-net
+
 volumes:
   app-data:
     driver: local

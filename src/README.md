@@ -18,4 +18,11 @@ curl -X POST http://0.0.0.0:8000/add_article/ \
 curl -X GET "http://0.0.0.0:8000/search_by_keyword/?keyword=fastapi"
 ```
 
+Script to fill db with data (lays in data/articles.csv):
 
+```bash
+cd src/
+python -m app.scripts.initialize_article_data
+```
+
+Do not forget to fill .env with credentials.

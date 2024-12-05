@@ -1,9 +1,5 @@
 # custom
 
-data
-
-
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -137,6 +133,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+**/venv**
 
 # Spyder project settings
 .spyderproject
