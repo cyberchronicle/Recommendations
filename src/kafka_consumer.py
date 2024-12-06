@@ -1,11 +1,16 @@
 from kafka import KafkaConsumer
-import json
 import multiprocessing
+import yaml
 
 stop_event = multiprocessing.Event()
 
-server_url = "localhost:9092"
-topic = ""
+with open("/var/configs/scrapper_kafka.yaml", 'r') as f:
+    config = yaml.load(f, Loader=yaml.SafeLoader)
+    config = config.get('kafka', {})
+    
+    
+server_url = config.get("brokers", ["localhost:9092"])[0]
+topic = config.get("topic", "scrapping")
 
 def main():
     consumer = KafkaConsumer(bootstrap_servers=server_url)

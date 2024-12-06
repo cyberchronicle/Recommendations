@@ -45,4 +45,5 @@ uvloop==0.21.0
 watchfiles==1.0.0
 websockets==14.1
 confluent-kafka
+kafka-python==2.0.2
 requests
