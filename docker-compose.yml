@@ -12,6 +12,17 @@ services:
       - app-net
     depends_on:
       - postgres
+  ml:
+    build: ./ml
+    container_name: ml
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./configs:/ml/configs
+    networks:
+      - app-net
+    depends_on:
+      - postgres
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -29,7 +40,7 @@ services:
     image: wurstmeister/zookeeper:latest
     ports:
       - "2181:2181"
-          
+
   postgres:
     image: postgres:16
     env_file:
