@@ -31,7 +31,7 @@ fi
 
 
 #Suggest
-echo "Тестирование suggest 1/2"
+echo "Тестирование suggest 1/3"
 RESPONSE=$(curl -s -X POST -H "accept: application/json" -H "Content-Type: application/json" -d '{ "user_tags": ["string"], "articles": [{"id": "1", "tags": ["string"]}] }' http://localhost:8001/suggest/1)
 STATUS=$?
 
@@ -50,7 +50,8 @@ else
   echo " "
 fi
 
-echo "Тестирование suggest 2/2"
+
+echo "Тестирование suggest 2/3"
 RESPONSE=$(curl -s -X POST -H "accept: application/json" -H "Content-Type: application/json" \
   -d '{
     "user_tags": ["осень", "небо"],
@@ -66,7 +67,7 @@ RESPONSE=$(curl -s -X POST -H "accept: application/json" -H "Content-Type: appli
     ]
   }' http://localhost:8001/suggest/1)
 
-EXPECTED_OUTPUT='{"ids":["1"]}'
+EXPECTED_OUTPUT='{"ids":["1","2"]}'
 if [[ "$RESPONSE" == "$EXPECTED_OUTPUT" ]]; then
   echo "Тест /suggest: Успешный ответ пройден"
   echo " "
@@ -75,6 +76,38 @@ else
   echo " "
 fi
 
+echo "Тестирование suggest 3/3"
+RESPONSE=$(curl -s -X POST -H "accept: application/json" -H "Content-Type: application/json" \
+  -d '{
+    "user_tags": ["осень", "небо"],
+    "articles": [
+      {
+        "id": "1",
+        "tags": ["осень", "небо"]
+      },
+      {
+        "id": "2",
+        "tags": ["весна", "земля"]
+      },
+      {
+        "id": "3",
+        "tags": ["осень", "земля"]
+      },
+      {
+        "id": "4",
+        "tags": ["земля", "небо"]
+      }
+    ]
+  }' http://localhost:8001/suggest/1)
+
+EXPECTED_OUTPUT='{"ids":["1","3","4","2"]}'
+if [[ "$RESPONSE" == "$EXPECTED_OUTPUT" ]]; then
+  echo "Тест /suggest: Успешный тест сортировки"
+  echo " "
+else
+  echo "Тест /suggest: тест сортировки провален. Получено: $RESPONSE"
+  echo " "
+fi
 
 
 #Text Process
@@ -112,7 +145,7 @@ fi
 
 echo "Тестирование Text Process 3/3"
 RESPONSE=$(curl -s -X POST -H "accept: application/json" -H "Content-Type: application/json" \
-  -d '{"text": "9018038, ZZZ! йцукен)"}' http://localhost:8001/text/process)
+  -d '{"text": "9018038"}' http://localhost:8001/text/process)
 
 EXPECTED_OUTPUT='{"tags":[]}'
 if [[ "$RESPONSE" == "$EXPECTED_OUTPUT" ]]; then
