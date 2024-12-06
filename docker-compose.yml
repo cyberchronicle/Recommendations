@@ -14,6 +14,18 @@ services:
     depends_on:
       - postgres
 
+  ml:
+    build: ./ml
+    container_name: ml
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./configs:/ml/configs
+    networks:
+      - app-net
+    depends_on:
+      - postgres
+
   postgres:
     image: postgres:16
     env_file:
