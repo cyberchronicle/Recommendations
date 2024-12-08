@@ -35,6 +35,17 @@ services:
     networks:
       - app-net
 
+  backend-go:
+    build:
+      context: backend
+    container_name: backend-go
+    ports:
+      - "8383:8383"
+    networks:
+      - app-net
+    depends_on:
+      - postgres
+
 volumes:
   app-data:
     driver: local
