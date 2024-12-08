@@ -1,0 +1,4 @@
+language: ru
+numOfKeywords: 10
+max_ngram_size: 1
+windowSize: 5

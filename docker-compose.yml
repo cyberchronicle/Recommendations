@@ -8,6 +8,19 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
+      - ./tests:/app/tests
+    networks:
+      - app-net
+    depends_on:
+      - postgres
+
+  ml:
+    build: ./ml
+    container_name: ml
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./configs:/ml/configs
     networks:
       - app-net
     depends_on:

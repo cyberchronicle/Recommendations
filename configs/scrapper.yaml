@@ -1,4 +1,0 @@
-kafka:
-  topic: "scrapping"
-  brokers:
-    - "kafka:29092"

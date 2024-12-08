@@ -9,8 +9,6 @@ from app.core import db
 from app.core.config import settings
 
 from strawberry.fastapi import GraphQLRouter
-from app.my_graphql import schema
-
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -33,7 +31,3 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
-
-graphql_app = GraphQLRouter(schema)
-
-app.include_router(graphql_app, prefix="/relevant")

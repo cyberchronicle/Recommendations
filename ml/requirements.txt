@@ -1,0 +1,7 @@
+yake
+pydantic
+pydantic-settings
+uvicorn
+python-dotenv
+fastapi
+pyyaml
