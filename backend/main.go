@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -13,8 +14,15 @@ func main() {
 }
 
 func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
+	// example: http://localhost:8383/recommendations/relevant?id=1&offset=1
+	log.Println("Received request:", r.URL)
+
 	idRaw := r.URL.Query()["id"]
 	offsetRaw := r.URL.Query()["offset"]
+
+	log.Println("idRaw:", idRaw)
+	log.Println("offsetRaw:", offsetRaw)
+
 
 	if len(idRaw) == 0 || idRaw[0] == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -23,6 +31,8 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	id := idRaw[0]
+	log.Printf("User ID: %s", id)
+
 	offset := 0
 
 	if len(offsetRaw) != 0 {
@@ -35,6 +45,7 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	log.Printf("Offset: %d", offset)
 
 	userTags := getUserTags(id)
 	articles := getArticles()
