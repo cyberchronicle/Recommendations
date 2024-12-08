@@ -48,7 +48,7 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Offset: %d", offset)
 
 	userTags := getUserTags(id)
-	articles := getArticles()
+	articles := getArticles([]string{"858174", "859996", "859692"})
 
 	suggestedArticles := suggestArticles(userTags, articles)
 
