@@ -1,14 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from typing import List, Dict, Union
 
-from kw_extractor import KeyWordsExtractor
+from kw_extractor import kw_extractor
 from ml_models import SuggestRequest, TextProcessRequest, ArticleRequest
 from ml_models import SuggestResponse, TextProcessResponse
+
 import json
 
 app = FastAPI()
-
-kw_extractor = KeyWordsExtractor(config_path="/ml/configs/key_words_extractor.yaml") # TODO: get path from settings
 
 
 @app.post("/suggest/{user_id}")

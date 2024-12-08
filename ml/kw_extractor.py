@@ -32,6 +32,10 @@ class KeyWordsExtractor:
             dedupLim=0.9,
             dedupFunc='seqm'
         )
+        with open('test.txt', 'r') as f:
+            text = " ".join(f.readlines())
+        warmup_res = self.extract(text)
+        print(f"INFO: ML-service. Test text first 5 tags: {warmup_res[:5]}. {len(warmup_res)} tags at all")
         
     def extract(self, text: str) -> List[str]:
         keywords_score = self.kw_extractor.extract_keywords(text)
@@ -50,3 +54,5 @@ class KeyWordsExtractor:
         res_list = [article_id for article_id, _ in scored_articles]
     
         return res_list
+    
+kw_extractor = KeyWordsExtractor(config_path="/ml/configs/key_words_extractor.yaml") # TODO: get path from settings
