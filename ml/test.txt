@@ -1,0 +1,114 @@
+".NET 9 вышел в релиз, и значит, можно начинать переносить свои проекты на новую версию. В этой статье мы рассмотрим новые улучшения и фишки .NET: C# 13, производительность, BuildCheck, GC, LINQ, NuGet Audit и прочее.
+
+![](https://habrastorage.org/r/w1560/getpro/habr/upload_files/09f/eed/331/09feed331c51cb00230cec2c04af60a5.png)
+
+.NET 9 сфокусирован на облачных приложениях и производительности. Это standard-term support (STS) релиз, который будет поддерживаться полтора года.
+
+По большей части эта статья расскажет про самые интересные улучшения в библиотеках, Runtime и SDK. Мне просто не хватит одной публикации, чтобы рассказать про изменения ещё и в ASP.NET Core, .NET MAUI, .NET Aspire, Entity Framework Core и WPF.
+
+### C\# 13
+
+Мы уже прошлись по всем нововведениям C# 13 в отдельной [статье](https://pvs-studio.ru/ru/blog/posts/csharp/1173/). Там мы затронули новые особенности языка: _partial_ свойства и индексаторы, _params коллекции_, новый класс _Lock_, инициализацию объекта по индексу ""от конца"" и многое другое. Радует, что изменений в C# в этом году больше, чем в прошлом, хоть и не все они одинаково полезны. А как вы оцениваете обновление языка? Мы вот взглянули, и сразу появились идеи для новых правил C# анализатора.
+
+Как обычно, наша команда уже работает над поддержкой нового .NET. Поддержка .NET 9 и C# 13 появится в PVS-Studio 7.34. Релиз запланирован на начало декабря, и чтобы его не пропустить, приглашаю подписаться на [рассылку пресс-релизов](https://pvs-studio.ru/ru/subscribe/).
+
+### Производительность
+
+С каждым выходом нового .NET Стивен Тауб выпускает ОГРОМНУЮ статью. В ней он рассказывает про улучшения производительности в .NET. Этот раз не исключение. Автор описывает усовершенствования в различных частях .NET и подкрепляет всё это бенчмарками. Конечно, улучшения коснулись JIT, GC, Native AOT, различных типов данных, рефлексии, LINQ и ещё десятка вещей.
+
+Я очень рекомендую хотя бы пролистать эту [статью](https://devblogs.microsoft.com/dotnet/performance-improvements-in-net-9/), чтобы быть в курсе изменений.
+
+### Библиотеки
+
+#### LINQ
+
+В .NET 9 были добавлены в _System.Linq_ методы [CountBy](https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.countby?view=net-9.0), [AggregateBy](https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.aggregateby?view=net-9.0) и [Index](https://learn.microsoft.com/en-us/dotnet/api/system.linq.enumerable.index?view=net-9.0).
+
+#### Новый тип OrderedDictionary
+
+Появился новый generic тип [_OrderedDictionary_](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.ordereddictionary-2?view=net-9.0). По сути, это универсальный аналог обычного [_OrderedDictionary_](https://learn.microsoft.com/ru-ru/dotnet/api/system.collections.specialized.ordereddictionary), у которого ключи и значения были представлены типом _object_.
+
+#### Новый тип ReadOnlySet
+
+Часто бывают ситуации, когда требуется передать коллекцию только для чтения. Для [_IList_](https://learn.microsoft.com/ru-ru/dotnet/api/system.collections.generic.ilist-1) вы использовали [_ReadOnlyCollection_](https://learn.microsoft.com/ru-ru/dotnet/api/system.collections.objectmodel.readonlycollection-1). Когда требовалось передать неизменяемый эквивалент [_IDictionary_](https://learn.microsoft.com/ru-ru/dotnet/api/system.collections.generic.idictionary-2), вы использовали [_ReadOnlyDictionary_](https://learn.microsoft.com/en-us/dotnet/api/system.collections.objectmodel.readonlydictionary-2). Но в случае [_ISet_](https://learn.microsoft.com/ru-ru/dotnet/api/system.collections.generic.iset-1) альтернативы не было. В .NET 9 это исправили, добавив [_ReadOnlySet_](https://learn.microsoft.com/en-us/dotnet/api/system.collections.objectmodel.readonlyset-1).
+
+#### Новый тип Tensor
+
+Тензоры являются очень важной частью для искусственного интеллекта. Новый тип будет использовать эффективное взаимодействие с такими библиотеками искусственного интеллекта, как ML.NET, TorchSharp и ONNX Runtime.
+
+#### allows ref struct в библиотеках
+
+В C# 13 появилась возможность указать компилятору и рантайму, что _ref struct_ может использоваться для generic параметра. И в .NET 9 _allows ref struct_ используется во многих местах по всей библиотеке.
+
+#### \[GeneratedRegex\] для свойств
+
+Ранее в .NET 7 появился новый способ создания регулярного выражения. Для этого используется генератор исходного кода _GeneratedRegex_. Он распознаёт использование атрибута _\[GeneratedRegex\]_ на частичном методе, который возвращает _Regex_, и автоматически генерирует реализацию метода с логикой работы. Начиная с .NET 9, и благодаря появлению в C# 13 _partial_ свойств, стало возможно использование атрибута _\[GeneratedRegex\]_ на этих самых свойствах. Например:
+
+```cs
+[GeneratedRegex(@""\b\w{5}\b"")]
+private static partial Regex FiveCharWordProperty { get; }
+
+```
+
+### SDK
+
+#### Terminal Logger включён по умолчанию
+
+Terminal Logger теперь активирован по умолчанию. Это новое средство ведения журнала, которое было представлено в .NET 8. Ранее нужно было включать его с помощью _\\tl_., теперь же Terminal Logger активирован сразу.
+
+![](https://habrastorage.org/getpro/habr/upload_files/419/497/4a9/4194974a9fb51b69946281db11839464.gif)
+
+#### Параллельный запуск тестов
+
+Теперь _dotnet test_ способен запускать тесты в разных целевых фреймворках для одного проекта параллельно. При этом всё работает с новым Terminal Logger.
+
+![](https://habrastorage.org/getpro/habr/upload_files/67f/dc7/fde/67fdc7fde6fb3e3d1aaca8c709b036ee.gif)
+
+#### NuGet Audit
+
+В .NET 8 при использовании _dotnet restore_ используемые пакеты проверяются на наличие известных уязвимостей. В .NET 9 по умолчанию изменился режим проверки: теперь на наличие уязвимостей проверяются не только прямые, но и транзитивные зависимости.
+
+Раз уже речь зашла про уязвимые пакеты, то, как и в прошлой статье про .NET 8, напомню: PVS-Studio также умеет искать прямые и транзитивные зависимости, которые содержат известную уязвимость. И, конечно, PVS-Studio может искать потенциальные уязвимости в вашем коде. Вы всегда можете получить триальную лицензию и попробовать анализатор на своей кодовой базе. В этом поможет вот эта [страница](https://pvs-studio.ru/ru/pvs-studio/try-free/?utm_source=website&utm_medium=habr&utm_campaign=article&utm_content=1184).
+
+#### BuildCheck
+
+В .NET 9 появилась новая функция для защиты от ошибок на этапе сборки. Чтобы запустить новый режим, нужно использовать флаг _/check_. Пока .NET 9 содержит мало проверок, но со временем их количество будет увеличиваться. К тому же можно писать свои [собственные правила](https://github.com/dotnet/msbuild/blob/main/documentation/specs/BuildCheck/BuildCheck.md#checks-and-rules-identification).
+
+#### Workload history
+
+Чтобы решить проблему отслеживания изменений workload, в .NET 9 SDK появилась новая команда _dotnet workload history_. Вы сможете просматривать изменения и откатывать их.
+
+### Runtime
+
+#### Feature switch
+
+Были добавлены два новых атрибута, которые вы можете использовать для переключения между областями функциональности:
+
+- [_FeatureSwitchDefinitionAttribute_](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.codeanalysis.featureswitchdefinitionattribute);
+
+- [_FeatureGuardAttribute_](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.codeanalysis.featureguardattribute).
+
+
+Сделано это для уменьшения размера итоговых программ. При публикации приложения с обрезкой или при компиляции Native AOT код, помеченный новыми атрибутами, будет удалён в зависимости от значений при сборке.
+
+#### Динамическая адаптация к размерам приложений (DATAS)
+
+Динамическая адаптация к размерам приложения ( [DATAS](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/datas)) теперь включена по умолчанию. Эта функция была добавлена в .NET 8. DATAS корректирует размеры куч GC в зависимости от нагрузки приложения.
+
+#### Улучшение JIT
+
+.NET 9 получил массу улучшений, связанных с JIT. Была улучшена оптимизация циклов, прокачана PGO, улучшено встраивание методов и многое другое. Перечислить все эти улучшения, и тем более объяснить их, будет невероятно сложно. Всем заинтересованным в улучшениях JIT предлагаю ознакомиться с полным списком по [ссылке](https://learn.microsoft.com/ru-ru/dotnet/core/whats-new/dotnet-9/runtime#performance-improvements).
+
+#### Улучшения Register Allocator
+
+В .NET 9 RyuJIT (Just-In-Time компилятор в .NET) использует более быстрый и простой подход для аллокации регистров при компиляции неоптимизированного кода. Подобный подход в некоторых сценариях позволяет сократить время запуска на 10%.
+
+### Заключение
+
+В этом году множество фишек обкатали, протестировали, улучшили и включили по умолчанию. Так что хоть изменений немного, но разницу вы заметите. Тем более бывает, что самые полезные улучшения находятся под капотом и большинству просто не интересны.
+
+И повторюсь, в статье я перечислил только самые интересные нововведения, которые были бы полезны большинству разработчиков. Со всеми улучшениями вы можете ознакомиться [здесь](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-9/overview). Если я упустил какое-то нововведение и для вас оно важно, то пишите об этом комментариях.
+
+Ну вот и всё. Теперь переводим будильник ровно на год и ждём выхода .NET 10. Будем праздновать юбилей, получается :) А пока ждём, расскажите, что вы ожидаете от .NET 10?
+
+Если хотите поделиться этой статьей с англоязычной аудиторией, то прошу использовать ссылку на перевод: Artem Rovenskii. [What's new in .NET 9?](https://pvs-studio.com/en/blog/posts/csharp/1184/)."
