@@ -55,4 +55,19 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(suggestedArticles[min(offset, len(suggestedArticles)):])
+
+
+	// just for testing by trigger
+	as := map[string]string{
+        "1": "что такое осень это небо",
+        "2": "у меня зима на сердце, на душе вьюга",
+    }
+	
+	for articleID, text := range as {
+		if len(text) > 0 {
+			tags := processText(text)
+
+			log.Printf("Article ID: %s, Tags: %v\n", articleID, tags)
+		}
+	}
 }
