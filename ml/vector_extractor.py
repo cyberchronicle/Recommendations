@@ -4,6 +4,7 @@ import yaml
 
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import random
 
 class VectorExtractor:
     def __init__(self, config_path: Union[str, dict] = None):
@@ -40,7 +41,9 @@ class VectorExtractor:
     def read_article(self, filepath: str) -> str:
         df = pd.read_csv(filepath)
         articles_text = df['text'].tolist()
-        text = articles_text[0] if articles_text else ""
+        ind = random.randrange(0, len(articles_text))
+        
+        text = articles_text[ind]
         return text
         
     def extract(self, text: str) -> np.ndarray:
