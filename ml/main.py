@@ -27,3 +27,14 @@ def text_process(request: TextProcessRequest) -> TextProcessResponse:
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+#---------
+# @app.post("/text/get-tags")
+# async def get_tags():
+#     try:
+#         file_path = '../data/articles.csv'
+#         tags_all = kw_extractor.all_tags(file_path)
+#         return {f"Keywords extracted and saved to keywords_rate-{file_path}.csv"}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
