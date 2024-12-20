@@ -71,7 +71,7 @@ class KeyWordsExtractor:
         keyword_df = pd.DataFrame(keyword_counts.items(), columns=['tag', 'rate'])
         keyword_df = keyword_df.sort_values(by="rate", ascending=False)
 
-        out_filepath = 'keywords_rate_' + filepath[3:].replace('/', '-') + '.csv'
+        out_filepath = 'keywords_rate_' + filepath[3:].replace('/', '-')
         keyword_df.to_csv(out_filepath, index=False)
         return True
 
