@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 )
 
@@ -11,7 +13,48 @@ type ArticleResponse struct {
 	Tags []string `json:"tags"`
 }
 
-func getUserTags(userId string) []string {
+type TagsOutput struct {
+	Tags []string `json:"tags"`
+}
+
+func getUserTags(userID string) []string {
+	url := "http://account/tags/get"
+
+	// Create a new HTTP request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
+	}
+
+	// Set the x-user-id header
+	req.Header.Set("x-user-id", userID)
+
+	// Create an HTTP client and send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("Error sending request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Read and print the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("Error reading response body: %v", err)
+	}
+
+	fmt.Println("Response Status:", resp.Status)
+	fmt.Println("Response Body:", string(body))
+
+	var tagsOutput TagsOutput
+	if err := json.NewDecoder(resp.Body).Decode(&tagsOutput); err != nil {
+		fmt.Printf("Error decoding response for user tags %s: %v\n", userID, err)
+		return []string{}
+	}
+
+	tags := tagsOutput.Tags
+	fmt.Printf("For user %s found tags %s\n", userID, tags)
+
 	return []string{"a", "b", "c", "d", "e"}
 }
 
@@ -49,7 +92,7 @@ func getArticles(articleIDs []string) map[string][]string {
 		// Add the tags to the map
 		articles[articleID] = articleResponse.Tags
 		fmt.Printf("For article %s found tags %s\n", articleID, articleResponse.Tags)
-		
+
 	}
 	return articles
 }
