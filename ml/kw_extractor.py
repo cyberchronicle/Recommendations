@@ -2,6 +2,8 @@ import yake
 from typing import List, Union, Dict
 import yaml
 from ml_models import ArticleRequest
+import pandas as pd
+from collections import Counter
 
 class KeyWordsExtractor:
     def __init__(self, config_path: Union[str, dict] = None):
@@ -55,4 +57,21 @@ class KeyWordsExtractor:
     
         return res_list
     
-kw_extractor = KeyWordsExtractor(config_path="/ml/configs/key_words_extractor.yaml") # TODO: get path from settings
+    def all_tags(self, filepath: str) -> bool:
+        df = pd.read_csv(filepath)
+        articles_text = df['text'].tolist()
+        all_keywords = []
+
+        for article in articles_text:
+            keywords = self.kw_extractor.extract(article)
+            all_keywords.extend(keywords)
+            print(keywords)
+
+        keyword_counts = Counter(all_keywords)
+        keyword_df = pd.DataFrame(keyword_counts.items(), columns=['tag', 'rate'])
+        keyword_df = keyword_df.sort_values(by="rate", ascending=False)
+
+        out_filepath = 'keywords_rate_' + filepath[3:].replace('/', '-')
+        keyword_df.to_csv(out_filepath, index=False)
+        return True
+
