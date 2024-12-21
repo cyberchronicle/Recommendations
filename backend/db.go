@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"log"
+	"math/rand"
 	"net/http"
+	"os"
 )
 
 type ArticleResponse struct {
@@ -13,6 +17,10 @@ type ArticleResponse struct {
 
 type TagsOutput struct {
 	Tags []string `json:"tags"`
+}
+
+type Config struct {
+	IDs []int `yaml:"ids"`
 }
 
 func getUserTags(userID string) []string {
@@ -54,15 +62,47 @@ func getUserTags(userID string) []string {
 	// tags := tagsOutput.Tags
 	// fmt.Printf("For user %s found tags %s\n", userID, tags)
 
-	return []string{"python", "api", "telegram", "developing", "bot"}
+	// Define themes and their associated tags
+	log.Printf("User id: %s", userID)
+	themes := map[string][]string{
+		"программирование": {"питон", "го", "java", "джаваскрипт", "си++"},
+		"api":              {"rest", "graphql", "soap", "json", "xml"},
+		"мессенджеры":      {"телеграм", "слак", "дискорд", "ватсап", "сигнал"},
+		"разработка":       {"фронтенд", "бэкенд", "фулстек", "девопс", "облако"},
+		"автоматизация":    {"бот", "скриптинг", "ci/cd", "тестирование", "развертывание"},
+		"бизнес":           {"маркетинг", "финансы", "продажи", "стратегия", "кадры"},
+	}
+
+	// Get a list of theme names
+	themeNames := make([]string, 0, len(themes))
+	for theme := range themes {
+		themeNames = append(themeNames, theme)
+	}
+
+	// Select a random theme
+	selectedTheme := themeNames[rand.Intn(len(themeNames))]
+	log.Printf("selectedTheme : %s", selectedTheme)
+	// Return the tags from the selected theme
+	return themes[selectedTheme]
 }
 
-// Function to get articles and their tags
-func getArticles(articleIDs []string) map[string][]string {
+// Function to get articles and their tags {id1: [tag1, tag2, tag3]}
+func getArticles() map[string][]string {
 	articles := make(map[string][]string)
 
-	for _, articleID := range articleIDs {
-		// Construct the URL for the article
+	file, err := os.Open("/data/ids.txt")
+	if err != nil {
+		log.Fatalf("failed to open file: %s", err)
+	}
+	defer file.Close()
+
+	// Create a scanner to read the file line by line
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		// Each line is an ID
+		articleID := scanner.Text()
+		fmt.Println("ID:", articleID)
+
 		url := fmt.Sprintf("http://fastapi:8000/api/v1/article/%s", articleID)
 
 		// Send the GET request to the article service
@@ -76,8 +116,6 @@ func getArticles(articleIDs []string) map[string][]string {
 		// Check if the response status is OK
 		if resp.StatusCode != http.StatusOK {
 			fmt.Printf("Received non-OK response for article %s: %s\n", articleID, resp.Status)
-		}
-		if resp.StatusCode != 201 {
 			continue
 		}
 
@@ -90,8 +128,14 @@ func getArticles(articleIDs []string) map[string][]string {
 
 		// Add the tags to the map
 		articles[articleID] = articleResponse.Tags
-		fmt.Printf("For article %s found tags %s\n", articleID, articleResponse.Tags)
 
+		fmt.Printf("For article %s found tags %s\n", articleID, articleResponse.Tags)
 	}
+
+	// Check for errors during scanning
+	if err := scanner.Err(); err != nil {
+		log.Fatalf("error reading file: %s", err)
+	}
+
 	return articles
 }

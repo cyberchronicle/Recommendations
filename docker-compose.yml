@@ -41,6 +41,8 @@ services:
     container_name: backend-go
     ports:
       - "8383:8383"
+    volumes:
+      - ./data:/data
     networks:
       - app-net
     depends_on:

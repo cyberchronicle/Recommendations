@@ -10,7 +10,10 @@
 
 ```
 /recommendations/relevant?id=&offset=0
+http://localhost:8383/recommendations/relevant?id=1?offset=1
 ```
+
+
 
 2. По введенному тексту находим топ-10 статей:
 ```
