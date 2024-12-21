@@ -18,44 +18,45 @@ type TagsOutput struct {
 }
 
 func getUserTags(userID string) []string {
-	url := "http://account/tags/get"
 
-	// Create a new HTTP request
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
-	}
+	// url := "http://account/tags/get"
 
-	// Set the x-user-id header
-	req.Header.Set("x-user-id", userID)
+	// // Create a new HTTP request
+	// req, err := http.NewRequest("GET", url, nil)
+	// if err != nil {
+	// 	log.Fatalf("Error creating request: %v", err)
+	// }
 
-	// Create an HTTP client and send the request
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatalf("Error sending request: %v", err)
-	}
-	defer resp.Body.Close()
+	// // Set the x-user-id header
+	// req.Header.Set("x-user-id", userID)
 
-	// Read and print the response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalf("Error reading response body: %v", err)
-	}
+	// // Create an HTTP client and send the request
+	// client := &http.Client{}
+	// resp, err := client.Do(req)
+	// if err != nil {
+	// 	log.Fatalf("Error sending request: %v", err)
+	// }
+	// defer resp.Body.Close()
 
-	fmt.Println("Response Status:", resp.Status)
-	fmt.Println("Response Body:", string(body))
+	// // Read and print the response body
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	log.Fatalf("Error reading response body: %v", err)
+	// }
 
-	var tagsOutput TagsOutput
-	if err := json.NewDecoder(resp.Body).Decode(&tagsOutput); err != nil {
-		fmt.Printf("Error decoding response for user tags %s: %v\n", userID, err)
-		return []string{}
-	}
+	// fmt.Println("Response Status:", resp.Status)
+	// fmt.Println("Response Body:", string(body))
 
-	tags := tagsOutput.Tags
-	fmt.Printf("For user %s found tags %s\n", userID, tags)
+	// var tagsOutput TagsOutput
+	// if err := json.NewDecoder(resp.Body).Decode(&tagsOutput); err != nil {
+	// 	fmt.Printf("Error decoding response for user tags %s: %v\n", userID, err)
+	// 	return []string{}
+	// }
 
-	return []string{"a", "b", "c", "d", "e"}
+	// tags := tagsOutput.Tags
+	// fmt.Printf("For user %s found tags %s\n", userID, tags)
+
+	return []string{"python", "api", "telegram", "developing", "bot"}
 }
 
 // Function to get articles and their tags
