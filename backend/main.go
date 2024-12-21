@@ -23,7 +23,6 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	log.Println("idRaw:", idRaw)
 	log.Println("offsetRaw:", offsetRaw)
 
-
 	if len(idRaw) == 0 || idRaw[0] == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "text/plain")
@@ -48,7 +47,8 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Offset: %d", offset)
 
 	userTags := getUserTags(id)
-	articles := getArticles([]string{"858174", "859996", "859692"})
+	// articles := getArticles()
+	articles := map[string][]string{}
 
 	suggestedArticles := suggestArticles(userTags, articles)
 
@@ -56,18 +56,4 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(suggestedArticles[min(offset, len(suggestedArticles)):])
 
-
-	// just for testing by trigger
-	as := map[string]string{
-        "1": "что такое осень это небо",
-        "2": "у меня зима на сердце, на душе вьюга",
-    }
-	
-	for articleID, text := range as {
-		if len(text) > 0 {
-			tags := processText(text)
-
-			log.Printf("Article ID: %s, Tags: %v\n", articleID, tags)
-		}
-	}
 }
