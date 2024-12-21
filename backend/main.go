@@ -49,18 +49,11 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 
 	userTags := getUserTags(id)
 	articles := getArticles([]string{"858174", "859996", "859692"})
-
-	suggestedArticles := suggestArticles(userTags, articles)
-
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(suggestedArticles[min(offset, len(suggestedArticles)):])
-
-
+	
 	// just for testing by trigger
 	as := map[string]string{
         "1": "что такое осень это небо",
-        "2": "у меня зима на сердце, на душе вьюга",
+        "2": "Как написать бота в телеграме для чайников Сначал берем апи туда сюда",
     }
 	
 	for articleID, text := range as {
@@ -70,4 +63,13 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Article ID: %s, Tags: %v\n", articleID, tags)
 		}
 	}
+
+	suggestedArticles := suggestArticles(userTags, articles)
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(suggestedArticles[min(offset, len(suggestedArticles)):])
+
+
+	
 }
