@@ -1,14 +1,16 @@
 from fastapi import FastAPI, HTTPException
 from typing import List, Dict, Union
 
-from kw_extractor import kw_extractor
-from ml_models import SuggestRequest, TextProcessRequest, ArticleRequest
-from ml_models import SuggestResponse, TextProcessResponse
+from kw_extractor import KeyWordsExtractor
+from vector_extractor import VectorExtractor
+from ml_models import SuggestRequest, TextProcessRequest, TextEmbeddingRequest, ArticleRequest
+from ml_models import SuggestResponse, TextProcessResponse, TextEmbeddingResponse
 
 import json
 
 app = FastAPI()
-
+kw_extractor = KeyWordsExtractor(config_path="/ml/configs/key_words_extractor.yaml") 
+v_extractor = VectorExtractor(config_path="/ml/configs/vector_extractor.yaml") 
 
 @app.post("/suggest/{user_id}")
 def suggest(user_id: int, request: SuggestRequest) -> SuggestResponse:
@@ -27,3 +29,14 @@ def text_process(request: TextProcessRequest) -> TextProcessResponse:
         return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/text/embedding")
+def text_embedding(request: TextEmbeddingRequest):
+    try:
+        embedding = v_extractor.extract(request.text)
+        response = TextEmbeddingResponse(embedding=embedding)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
