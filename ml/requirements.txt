@@ -3,5 +3,7 @@ pydantic
 pydantic-settings
 uvicorn
 python-dotenv
+sentence_transformers
 fastapi
+pandas
 pyyaml

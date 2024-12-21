@@ -67,3 +67,4 @@ class VectorExtractor:
 
         
 v_extractor = VectorExtractor(config_path="../configs/vector_extractor.yaml")
+# TODO: get path from settings

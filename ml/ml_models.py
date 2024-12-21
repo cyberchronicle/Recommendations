@@ -14,6 +14,9 @@ class TextProcessRequest(BaseModel):
     
 class SuggestResponse(BaseModel):
     ids: List[str]
-    
+
+class TextEmbeddingResponse(BaseModel):
+    embedding: List[float] 
+
 class TextProcessResponse(BaseModel):
     tags: List[str]

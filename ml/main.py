@@ -2,8 +2,9 @@ from fastapi import FastAPI, HTTPException
 from typing import List, Dict, Union
 
 from kw_extractor import kw_extractor
+from vector_extractor import v_extractor
 from ml_models import SuggestRequest, TextProcessRequest, ArticleRequest
-from ml_models import SuggestResponse, TextProcessResponse
+from ml_models import SuggestResponse, TextProcessResponse, TextEmbeddingResponse
 
 import json
 
@@ -28,7 +29,15 @@ def text_process(request: TextProcessRequest) -> TextProcessResponse:
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
+@app.post("text/embedding")
+def text_embedding(request: TextProcessRequest):
+    try:
+        embedding = v_extractor.extract(request.text)
+        response = TextEmbeddingResponse(embedding=embedding)
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
 #---------
 # @app.post("/text/get-tags")
 # async def get_tags():

@@ -76,9 +76,5 @@ class KeyWordsExtractor:
         return True
 
         
-# kw_extractor = KeyWordsExtractor(config_path="../configs/key_words_extractor.yaml") 
-# # TODO: get path from settings
-
-if __name__ == "__main__":
-    kw_extractor = KeyWordsExtractor(config_path="../configs/key_words_extractor.yaml")
-    kw_extractor.all_tags('../data/articles.csv')
+kw_extractor = KeyWordsExtractor(config_path="../configs/key_words_extractor.yaml") 
+# TODO: get path from settings
