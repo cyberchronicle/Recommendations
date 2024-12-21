@@ -75,6 +75,3 @@ class KeyWordsExtractor:
         keyword_df.to_csv(out_filepath, index=False)
         return True
 
-        
-kw_extractor = KeyWordsExtractor(config_path="../configs/key_words_extractor.yaml") 
-# TODO: get path from settings

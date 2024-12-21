@@ -1,15 +1,16 @@
 from fastapi import FastAPI, HTTPException
 from typing import List, Dict, Union
 
-from kw_extractor import kw_extractor
-from vector_extractor import v_extractor
-from ml_models import SuggestRequest, TextProcessRequest, ArticleRequest
+from kw_extractor import KeyWordsExtractor
+from vector_extractor import VectorExtractor
+from ml_models import SuggestRequest, TextProcessRequest, TextEmbeddingRequest, ArticleRequest
 from ml_models import SuggestResponse, TextProcessResponse, TextEmbeddingResponse
 
 import json
 
 app = FastAPI()
-
+kw_extractor = KeyWordsExtractor(config_path="/ml/configs/key_words_extractor.yaml") 
+v_extractor = VectorExtractor(config_path="/ml/configs/vector_extractor.yaml") 
 
 @app.post("/suggest/{user_id}")
 def suggest(user_id: int, request: SuggestRequest) -> SuggestResponse:
@@ -29,8 +30,9 @@ def text_process(request: TextProcessRequest) -> TextProcessResponse:
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("text/embedding")
-def text_embedding(request: TextProcessRequest):
+
+@app.post("/text/embedding")
+def text_embedding(request: TextEmbeddingRequest):
     try:
         embedding = v_extractor.extract(request.text)
         response = TextEmbeddingResponse(embedding=embedding)
@@ -38,12 +40,3 @@ def text_embedding(request: TextProcessRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-#---------
-# @app.post("/text/get-tags")
-# async def get_tags():
-#     try:
-#         file_path = '../data/articles.csv'
-#         tags_all = kw_extractor.all_tags(file_path)
-#         return {f"Keywords extracted and saved to keywords_rate-{file_path}.csv"}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")

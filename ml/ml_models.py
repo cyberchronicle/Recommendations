@@ -11,6 +11,9 @@ class SuggestRequest(BaseModel):
 
 class TextProcessRequest(BaseModel):
     text: str
+
+class TextEmbeddingRequest(BaseModel):
+    text: str
     
 class SuggestResponse(BaseModel):
     ids: List[str]

@@ -24,19 +24,17 @@ class VectorExtractor:
         elif isinstance(config_path, dict):
             config = config_path
 
-
+        print(f"INFO: Model is loading...")
         self.v_extractor = SentenceTransformer(
             config.get('model_name', "deepvk/USER-bge-m3"))
+        print(f"INFO: Model is loaded.")
         
-        #main_requst_compare
-        filepath = '../data/articles.csv'
-        text = self.read_article(filepath)
-        request = 'Как сделать бота на битоне код для чайников'
+        text = "Сегодня сделаем бота в телеграм на питоне с помощью библиотеки aiogramm. Что для этого нужно? Гайд для чайников"
+        request = 'Как сделать ботв на питоне код для чайнико'
 
         similarity_score = self.compare(text, request)
-        print(f"Text: {text[:30]}...")
-        print(f"Request: {request}")
-        print(f"Similarity score: {similarity_score:.4f}")
+
+        print(f"INFO: Similarity score after warmup: {similarity_score:.4f}")
 
     def read_article(self, filepath: str) -> str:
         df = pd.read_csv(filepath)
@@ -65,6 +63,4 @@ class VectorExtractor:
         similarity_score = self.cosine_similarity(text_embeddings, request_embeddings)
         return similarity_score
 
-        
-v_extractor = VectorExtractor(config_path="../configs/vector_extractor.yaml")
-# TODO: get path from settings
+
