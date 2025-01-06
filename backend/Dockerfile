@@ -10,7 +10,7 @@ COPY . .
 
 RUN go build -o main .
 
-FROM debian:stable-slim
+FROM --platform=linux/amd64 debian:stable-slim
 
 WORKDIR /app
 

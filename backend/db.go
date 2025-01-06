@@ -25,7 +25,8 @@ type Config struct {
 
 func getUserTags(userID string) []string {
 
-	// url := "http://account/tags/get"
+	url := fmt.Sprintf("http://%s/tags/get", AppConfig.PersonalAccountHostPort)
+	log.Println("Generated URL for personal account:", url)
 
 	// // Create a new HTTP request
 	// req, err := http.NewRequest("GET", url, nil)
@@ -103,7 +104,7 @@ func getArticles() map[string][]string {
 		articleID := scanner.Text()
 		fmt.Println("ID:", articleID)
 
-		url := fmt.Sprintf("http://fastapi:8000/api/v1/article/%s", articleID)
+		url := fmt.Sprintf("http://%s/api/v1/article/%s", AppConfig.RecsDbHostPort, articleID)
 
 		// Send the GET request to the article service
 		resp, err := http.Get(url)

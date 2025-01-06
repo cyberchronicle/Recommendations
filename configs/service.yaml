@@ -1,1 +1,6 @@
 # ports and hosts?
+ml_host_port: "ml:8001"
+backend_host_port: "backend-go:8383"
+personal_account_host_port: "changeme:8000"
+recs_db_host_port: "fastapi:8000"
+scrapper_host_port: "scrapper:8000"
