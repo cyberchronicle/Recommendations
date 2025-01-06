@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+
 func main() {
 	err := LoadConfig("/configs/service.yaml")
 	if err != nil {
@@ -76,11 +77,9 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Offset: %d", offset)
 
-	userTags := getUserTags(id)
-	// articles := getArticles()
-	articles := map[string][]string{}
+	userTags := GetUserTags(id)
 
-	suggestedArticles := suggestArticles(userTags, articles)
+	suggestedArticles := suggestArticles(userTags)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

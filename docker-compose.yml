@@ -16,13 +16,15 @@ services:
       - postgres
 
   ml:
-    build: ./ml
+    build: 
+      context: ml
+      dockerfile: Dockerfile
     container_name: ml
     platform: linux/amd64
     ports:
       - "8001:8001"
-    volumes:
-      - ./configs:/ml/configs
+    # volumes:
+      # - ./configs:/ml/configs
     networks:
       - app-net
     depends_on:

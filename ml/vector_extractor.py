@@ -1,7 +1,7 @@
 from typing import List, Union
 import pandas as pd
 import yaml
-
+import logging
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import random
@@ -24,17 +24,17 @@ class VectorExtractor:
         elif isinstance(config_path, dict):
             config = config_path
 
-        print(f"INFO: Model is loading...")
+        logging.info(f"Model is loading...")
         self.v_extractor = SentenceTransformer(
             config.get('model_name', "deepvk/USER-bge-m3"))
-        print(f"INFO: Model is loaded.")
+        logging.info(f"Model is loaded.")
         
         text = "Сегодня сделаем бота в телеграм на питоне с помощью библиотеки aiogramm. Что для этого нужно? Гайд для чайников"
         request = 'Как сделать ботв на питоне код для чайнико'
 
         similarity_score = self.compare(text, request)
 
-        print(f"INFO: Similarity score after warmup: {similarity_score:.4f}")
+        logging.info(f"Similarity score after warmup: {similarity_score:.4f}")
 
     def read_article(self, filepath: str) -> str:
         df = pd.read_csv(filepath)

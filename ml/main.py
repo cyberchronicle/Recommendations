@@ -8,6 +8,14 @@ from ml_models import SuggestResponse, TextProcessResponse, TextEmbeddingRespons
 
 import json
 
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
 app = FastAPI()
 kw_extractor = KeyWordsExtractor(config_path="/ml/configs/key_words_extractor.yaml") 
 v_extractor = VectorExtractor(config_path="/ml/configs/vector_extractor.yaml") 

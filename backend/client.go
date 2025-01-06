@@ -65,7 +65,7 @@ func suggestArticles(userTags []string, articles map[string][]string) []string {
 }
 
 func processText(text string) []string {
-	ml_text_process_url := "http://ml:8001/text/process"
+	ml_text_process_url := fmt.Sprintf("http://%s/text/process", AppConfig.MLHostPort)
 
 	requestBody, err := json.Marshal(TextRequest{Text: text})
 	if err != nil {

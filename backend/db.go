@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -23,7 +24,7 @@ type Config struct {
 	IDs []int `yaml:"ids"`
 }
 
-func getUserTags(userID string) []string {
+func GetUserTags(userID string) []string {
 
 	url := fmt.Sprintf("http://%s/tags/get", AppConfig.PersonalAccountHostPort)
 	log.Println("Generated URL for personal account:", url)
@@ -87,8 +88,56 @@ func getUserTags(userID string) []string {
 	return themes[selectedTheme]
 }
 
-// Function to get articles and their tags {id1: [tag1, tag2, tag3]}
-func getArticles() map[string][]string {
+// GetArticles reads the articles from a CSV file and returns a map of article IDs to their tags.
+func GetArticles() map[string][]string {
+	articles := make(map[string][]string)
+
+	file, err := os.Open("/data/articles.csv")
+	if err != nil {
+		log.Fatalf("failed to open file: %s", err)
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+
+	// Read the header line to skip it
+	_, err = reader.Read()
+	if err != nil {
+		log.Fatalf("failed to read header: %s", err)
+	}
+
+	// Read each record from the CSV
+	for {
+		record, err := reader.Read()
+		if err != nil {
+			if err.Error() == "EOF" {
+				break
+			}
+			log.Fatalf("failed to read record: %s", err)
+		}
+
+		// Assuming the CSV columns are: id, name, text, complexity, reading_time, tags
+		id := record[0]
+		tags := record[5]
+		
+		log.Println("Tags: ", tags)
+		
+		var tagList []string
+		err = json.Unmarshal([]byte(tags), &tagList)
+		if err != nil {
+			log.Printf("failed to parse tags for article %s: %s", id, err)
+			continue
+		}
+
+		// Add to the map
+		articles[id] = tagList
+	}
+	log.Printf("Total number of articles: %d", len(articles))
+	return articles
+}
+
+// Function to get articles and their tags from api {id1: [tag1, tag2, tag3]}
+func GetArticlesSlow() map[string][]string {
 	articles := make(map[string][]string)
 
 	file, err := os.Open("/data/ids.txt")
