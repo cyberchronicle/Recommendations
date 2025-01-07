@@ -5,8 +5,8 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 )
@@ -29,63 +29,64 @@ func GetUserTags(userID string) []string {
 	url := fmt.Sprintf("http://%s/tags/get", AppConfig.PersonalAccountHostPort)
 	log.Println("Generated URL for personal account:", url)
 
-	// // Create a new HTTP request
-	// req, err := http.NewRequest("GET", url, nil)
-	// if err != nil {
-	// 	log.Fatalf("Error creating request: %v", err)
-	// }
+	// Create a new HTTP request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatalf("Error creating request: %v", err)
+	}
 
-	// // Set the x-user-id header
-	// req.Header.Set("x-user-id", userID)
+	// Set the x-user-id header
+	req.Header.Set("x-user-id", userID)
 
-	// // Create an HTTP client and send the request
-	// client := &http.Client{}
-	// resp, err := client.Do(req)
-	// if err != nil {
-	// 	log.Fatalf("Error sending request: %v", err)
-	// }
-	// defer resp.Body.Close()
+	// Create an HTTP client and send the request
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalf("Error sending request: %v", err)
+	}
+	defer resp.Body.Close()
 
-	// // Read and print the response body
-	// body, err := io.ReadAll(resp.Body)
-	// if err != nil {
-	// 	log.Fatalf("Error reading response body: %v", err)
-	// }
+	// Read and print the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalf("Error reading response body: %v", err)
+	}
 
-	// fmt.Println("Response Status:", resp.Status)
-	// fmt.Println("Response Body:", string(body))
+	fmt.Println("Response Status:", resp.Status)
+	fmt.Println("Response Body:", string(body))
 
-	// var tagsOutput TagsOutput
-	// if err := json.NewDecoder(resp.Body).Decode(&tagsOutput); err != nil {
-	// 	fmt.Printf("Error decoding response for user tags %s: %v\n", userID, err)
-	// 	return []string{}
-	// }
+	var tagsOutput TagsOutput
+	if err := json.NewDecoder(resp.Body).Decode(&tagsOutput); err != nil {
+		fmt.Printf("Error decoding response for user tags %s: %v\n", userID, err)
+		return []string{}
+	}
 
-	// tags := tagsOutput.Tags
-	// fmt.Printf("For user %s found tags %s\n", userID, tags)
+	tags := tagsOutput.Tags
+	fmt.Printf("For user %s found tags %s\n", userID, tags)
 
 	// Define themes and their associated tags
-	log.Printf("User id: %s", userID)
-	themes := map[string][]string{
-		"программирование": {"питон", "го", "java", "джаваскрипт", "си++"},
-		"api":              {"rest", "graphql", "soap", "json", "xml"},
-		"мессенджеры":      {"телеграм", "слак", "дискорд", "ватсап", "сигнал"},
-		"разработка":       {"фронтенд", "бэкенд", "фулстек", "девопс", "облако"},
-		"автоматизация":    {"бот", "скриптинг", "ci/cd", "тестирование", "развертывание"},
-		"бизнес":           {"маркетинг", "финансы", "продажи", "стратегия", "кадры"},
-	}
+	// log.Printf("User id: %s", userID)
+	// themes := map[string][]string{
+	// 	"программирование": {"питон", "го", "java", "джаваскрипт", "си++"},
+	// 	"api":              {"rest", "graphql", "soap", "json", "xml"},
+	// 	"мессенджеры":      {"телеграм", "слак", "дискорд", "ватсап", "сигнал"},
+	// 	"разработка":       {"фронтенд", "бэкенд", "фулстек", "девопс", "облако"},
+	// 	"автоматизация":    {"бот", "скриптинг", "ci/cd", "тестирование", "развертывание"},
+	// 	"бизнес":           {"маркетинг", "финансы", "продажи", "стратегия", "кадры"},
+	// }
 
-	// Get a list of theme names
-	themeNames := make([]string, 0, len(themes))
-	for theme := range themes {
-		themeNames = append(themeNames, theme)
-	}
+	// // Get a list of theme names
+	// themeNames := make([]string, 0, len(themes))
+	// for theme := range themes {
+	// 	themeNames = append(themeNames, theme)
+	// }
 
-	// Select a random theme
-	selectedTheme := themeNames[rand.Intn(len(themeNames))]
-	log.Printf("selectedTheme : %s", selectedTheme)
-	// Return the tags from the selected theme
-	return themes[selectedTheme]
+	// // Select a random theme
+	// selectedTheme := themeNames[rand.Intn(len(themeNames))]
+	// log.Printf("selectedTheme : %s", selectedTheme)
+	// // Return the tags from the selected theme
+
+	return tags
 }
 
 // GetArticles reads the articles from a CSV file and returns a map of article IDs to their tags.
@@ -119,9 +120,9 @@ func GetArticles() map[string][]string {
 		// Assuming the CSV columns are: id, name, text, complexity, reading_time, tags
 		id := record[0]
 		tags := record[5]
-		
+
 		log.Println("Tags: ", tags)
-		
+
 		var tagList []string
 		err = json.Unmarshal([]byte(tags), &tagList)
 		if err != nil {

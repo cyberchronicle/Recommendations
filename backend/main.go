@@ -9,7 +9,6 @@ import (
 	"strings"
 )
 
-
 func main() {
 	err := LoadConfig("/configs/service.yaml")
 	if err != nil {
@@ -41,30 +40,27 @@ func main() {
 	}
 
 	addr := fmt.Sprintf(":%s", port)
+	log.Printf("Starting server on %s", addr)
 	http.ListenAndServe(addr, nil)
 }
 
 func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
-	// example: http://localhost:8383/recommendations/relevant?id=1&offset=1
+	// example: http://localhost:8383/recommendations/relevant?offset=1
 	log.Println("Received request:", r.URL)
 
-	idRaw := r.URL.Query()["id"]
-	offsetRaw := r.URL.Query()["offset"]
-
-	log.Println("idRaw:", idRaw)
-	log.Println("offsetRaw:", offsetRaw)
-
-	if len(idRaw) == 0 || idRaw[0] == "" {
+	// Extract user ID from the headers
+	userID := r.Header.Get("X-User-Id")
+	if userID == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "text/plain")
-		w.Write([]byte("query parameter 'id' is required - user id"))
+		w.Write([]byte("header 'X-User-Id' is required"))
 		return
 	}
-	id := idRaw[0]
-	log.Printf("User ID: %s", id)
+	log.Printf("User ID: %s", userID)
 
+	// Extract offset from query parameters
+	offsetRaw := r.URL.Query()["offset"]
 	offset := 0
-
 	if len(offsetRaw) != 0 {
 		var err error
 		offset, err = strconv.Atoi(offsetRaw[0])
@@ -77,12 +73,18 @@ func relevantRecommendations(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Offset: %d", offset)
 
-	userTags := GetUserTags(id)
+	userTags := GetUserTags(userID)
 
 	suggestedArticles := suggestArticles(userTags)
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(suggestedArticles[min(offset, len(suggestedArticles)):])
+}
 
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
