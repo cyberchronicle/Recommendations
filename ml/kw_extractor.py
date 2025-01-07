@@ -35,10 +35,10 @@ class KeyWordsExtractor:
             dedupLim=0.9,
             dedupFunc='seqm'
         )
-        with open('test.txt', 'r') as f:
-            text = " ".join(f.readlines())
-        warmup_res = self.extract(text)
-        logging.info(f"ML-service. Test text first 5 tags: {warmup_res[:5]}. {len(warmup_res)} tags at all")
+        # with open('test.txt', 'r') as f:
+        #     text = " ".join(f.readlines())
+        # warmup_res = self.extract(text)
+        # logging.info(f"ML-service. Test text first 5 tags: {warmup_res[:5]}. {len(warmup_res)} tags at all")
         
     def extract(self, text: str) -> List[str]:
         keywords_score = self.kw_extractor.extract_keywords(text)

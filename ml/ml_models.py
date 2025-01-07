@@ -1,13 +1,17 @@
 from pydantic import BaseModel
 from typing import List, Dict, Union
 
+
 class ArticleRequest(BaseModel):
     id: str
     tags: List[str]
-    
+    embedding: List[float] = []
+
+class Articles(BaseModel):
+    articles: List[ArticleRequest]
+
 class SuggestRequest(BaseModel):
     user_tags: List[str]
-    articles: List[ArticleRequest]
 
 class TextProcessRequest(BaseModel):
     text: str
